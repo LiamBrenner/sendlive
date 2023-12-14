@@ -24,6 +24,7 @@ except ImportError:
 
 package = "sendlive"
 python_versions = [
+    "3.11",
     "3.10",
     "3.9",
 ]
