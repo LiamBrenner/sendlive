@@ -10,6 +10,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    environment: release
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
