@@ -2,7 +2,7 @@
 name = "sendlive"
 version = "0.0.3"
 description = "sendlive"
-authors = ["Liam Brenner <liam@brenner.au>"]
+authors = ["Liam Brenner <liam.brenner@gmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
 homepage = "https://github.com/LiamBrenner/sendlive"
