@@ -124,7 +124,6 @@ def precommit(session: Session) -> None:
     ]
     session.install(
         "ruff",
-        "darglint",
         "pre-commit",
         "pre-commit-hooks",
     )
