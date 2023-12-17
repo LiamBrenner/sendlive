@@ -1,5 +1,6 @@
 repos:
-  - repo: local
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
         name: Check for added large files
@@ -15,12 +16,6 @@ repos:
         entry: check-yaml
         language: system
         types: [yaml]
-      - id: darglint
-        name: darglint
-        entry: darglint
-        language: system
-        types: [python]
-        stages: [manual]
       - id: end-of-file-fixer
         name: Fix End of Files
         entry: end-of-file-fixer
@@ -37,5 +32,5 @@ repos:
     rev: v0.1.8
     hooks:
       - id: ruff
-        args: [ --fix ]
+        args: [--fix]
       - id: ruff-format
