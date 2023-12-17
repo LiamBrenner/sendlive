@@ -46,7 +46,7 @@ gcp = ["google-cloud-video-live-stream"]
 sendlive = "sendlive.__main__:main"
 
 [tool.coverage.paths]
-source = ["src", "*/site-packages"]
+source = ["sendlive", "*/site-packages"]
 tests = ["tests", "*/tests"]
 
 [tool.coverage.run]
