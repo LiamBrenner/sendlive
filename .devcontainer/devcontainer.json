@@ -1,0 +1,36 @@
+{
+    "name": "sendlive",
+    "image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "editor.formatOnSave": true,
+                "[python]": {
+                    "analysis.autoImportCompletions": true,
+                    "analysis.typeCheckingMode": "basic",
+                    "defaultInterpreterPath": "/usr/local/bin/python",
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": true,
+                        "source.fixAll": true
+                    },
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "formatting.provider": "ruff",
+                    "languageServer": "Pylance",
+                    "linting.enabled": true,
+                    "linting.mypyEnabled": true,
+                    "linting.mypyPath": "/usr/local/bin/mypy"
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.debugpy",
+                "codecov.codecov",
+                "ms-python.mypy-type-checker",
+                "tamasfe.even-better-toml",
+                "twixes.pypi-assistant",
+                "charliermarsh.ruff"
+            ]
+        }
+    }
+}
