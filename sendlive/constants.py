@@ -28,7 +28,7 @@ class AWSCredentials(BaseCredential):
     secret_key: SecretStr
     region: str
     service_provider: ServiceProvider = ServiceProvider.AWS
-    adapter_cls = AWSAdapter
+    adapter_cls = AWSAdapter  # type: ignore
 
 
 class GCPCredentials(BaseCredential):
@@ -37,4 +37,4 @@ class GCPCredentials(BaseCredential):
     project_id: str
     service_account_json: SecretStr
     service_provider: ServiceProvider = ServiceProvider.GCP
-    adapter_cls = GCPAdapter
+    adapter_cls = GCPAdapter  # type: ignore
