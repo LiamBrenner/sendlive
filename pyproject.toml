@@ -105,7 +105,7 @@ plugins = ["pydantic.mypy"]
 [tool.ruff]
 target-version = "py311"
 select = ["E4", "E7", "E9", "F", "B", "N", "D", "S", "I", "UP", "PL"]
-ignore = ["D100"]
+ignore = ["D100", "UP007"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
