@@ -6,6 +6,7 @@ from typing_extensions import override
 
 from sendlive.adapter import BaseAdapter
 from sendlive.constants import AWSCredentials
+from sendlive.exceptions import SendLiveError
 from sendlive.providers.aws.stream import AWSStream
 
 
@@ -38,6 +39,8 @@ class AWSAdapter(BaseAdapter):
         self, name: str, url: str, setup_endpoint: bool = True
     ) -> AWSStream:
         stream = AWSStream(name="my_stream", url="rtmp://my_stream")
+        if not self.boto_session:
+            raise SendLiveError("Boto session not set up.")
         if setup_endpoint:
             stream.setup_endpoint(boto_session=self.boto_session)
         return stream
