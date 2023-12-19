@@ -120,6 +120,8 @@ build-backend = "poetry.core.masonry.api"
     "S311",    # Standard pseudo-random generators are not suitable for cryptographic purposes
     "S106",    # Actually secret secrets not required in tests, ie can use placeholders
     "S105",    # Actually secret secrets not required in tests, ie can use placeholders
+    "D104",    # Don't religiously need docstrings for all test modules
+    "D103",    # Don't religiously need docstrings for all test classes/funcs
 ]
 
 
