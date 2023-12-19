@@ -2,10 +2,6 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, SecretStr
 
-from sendlive.adapter import BaseAdapter
-from sendlive.providers.aws import AWSAdapter
-from sendlive.providers.gcp import GCPAdapter
-
 
 class ServiceProvider(Enum):
     """Enum for the different cloud providers."""
@@ -18,7 +14,6 @@ class BaseCredential(BaseModel):
     """Base class for all credentials."""
 
     service_provider: ServiceProvider = Field(frozen=True)
-    adapter_cls: type[BaseAdapter]
 
 
 class AWSCredentials(BaseCredential):
@@ -28,7 +23,6 @@ class AWSCredentials(BaseCredential):
     secret_key: SecretStr
     region: str
     service_provider: ServiceProvider = ServiceProvider.AWS
-    adapter_cls = AWSAdapter  # type: ignore
 
 
 class GCPCredentials(BaseCredential):
@@ -37,4 +31,3 @@ class GCPCredentials(BaseCredential):
     project_id: str
     service_account_json: SecretStr
     service_provider: ServiceProvider = ServiceProvider.GCP
-    adapter_cls = GCPAdapter  # type: ignore
