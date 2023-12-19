@@ -22,7 +22,7 @@ class AWSAdapter(BaseAdapter):
     def setup_provider(self) -> None:
         self.boto_session = Session(
             aws_access_key_id=self.credentials.access_key,
-            aws_secret_access_key=self.credentials.secret_key,
+            aws_secret_access_key=self.credentials.secret_key.get_secret_value(),
             region_name=self.credentials.region,
         )
 
