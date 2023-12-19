@@ -13,7 +13,7 @@ from sendlive.providers.aws.stream import AWSStream
 
 
 @pytest.fixture(scope="function")
-def aws_credentials():
+def aws_credentials() -> None:
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
@@ -30,7 +30,7 @@ def sendlive_aws_credentials() -> AWSCredentials:
 
 
 @pytest.fixture(scope="function")
-def medialive(aws_credentials) -> Generator[MediaLiveClient, Any, None]:
+def medialive(aws_credentials: None) -> Generator[MediaLiveClient, Any, None]:
     with mock_medialive():
         yield boto3.client("medialive", region_name="ap-southeast-2")
 
