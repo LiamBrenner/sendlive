@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sendlive"
-version = "0.0.3"
+version = "0.0.4-alpha1"
 description = "sendlive"
 authors = ["Liam Brenner <liam.brenner@gmail.com>"]
 license = "GPL-3.0"
