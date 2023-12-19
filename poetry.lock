@@ -2909,4 +2909,4 @@ gcp = ["google-cloud-video-live-stream"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "e4a7bf0cac1a7c87a241d8321f8b5169dea2feb0efb5caa624e9461c4eb12494"
+content-hash = "f89c7c8d4ba41c2921154ed5a7d9848b52049aa78ef30fe6a813c9fc2928125e"
