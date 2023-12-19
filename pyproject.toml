@@ -16,8 +16,8 @@ Changelog = "https://github.com/LiamBrenner/sendlive/releases"
 [tool.poetry.dependencies]
 python = "^3.9"
 click = ">=8.1.7"
-boto3 = { version = ">=1.34.0", optional = true }
-google-cloud-video-live-stream = { version = ">=1.6.0", optional = true }
+boto3 = { version = ">=1.34.0" }
+google-cloud-video-live-stream = { version = ">=1.6.0" }
 urllib3 = ">=1.26.18,<2.0"
 pydantic = ">=2.5.2"
 
