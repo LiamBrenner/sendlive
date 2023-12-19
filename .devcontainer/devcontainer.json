@@ -29,7 +29,8 @@
                 "ms-python.mypy-type-checker",
                 "tamasfe.even-better-toml",
                 "twixes.pypi-assistant",
-                "charliermarsh.ruff"
+                "charliermarsh.ruff",
+                "Boto3typed.boto3-ide"
             ]
         }
     }
