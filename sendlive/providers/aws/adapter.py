@@ -23,7 +23,7 @@ class AWSAdapter(BaseAdapter):
             aws_access_key_id=self.credentials.access_key,
             aws_secret_access_key=self.credentials.secret_key,
             region_name=self.credentials.region,
-        )  # type: ignore
+        )
 
     @override
     def setup_stream(self) -> None:
