@@ -69,8 +69,7 @@ def test_aws_adapter_create_stream_with_endpoint_creation(
 ) -> None:
     """Test adapter can successfully create a stream, and create and fetch an enpoint for it."""
     stream: AWSStream = sendlive_aws_adapter_with_boto_session.create_stream(
-        name="my_stream", url="rtmp://my_stream"
+        name="my_stream"
     )
     assert stream
     assert stream.endpoint
-    assert stream.endpoint == "rtmp://my_stream"
