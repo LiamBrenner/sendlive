@@ -30,5 +30,14 @@
     "mypy-type-checker.args": [
         "--config-file",
         "${workspaceFolder}/pyproject.toml"
-    ]
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "analysis.typeCheckingMode": "basic",
+        "formatting.provider": "ruff",
+        "linting.enabled": true,
+        "linting.mypyEnabled": true,
+        "linting.mypyPath": "/usr/local/bin/mypy"
+    },
 }
