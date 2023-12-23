@@ -9,7 +9,6 @@ class BaseStream(BaseModel, ABC):
     This class is meant to only represent one individual stream.
     """
 
-    url: str
     name: str
 
     @abstractmethod

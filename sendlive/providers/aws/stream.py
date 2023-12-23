@@ -7,6 +7,7 @@ from typing_extensions import override
 
 from sendlive.exceptions import SendLiveError
 from sendlive.stream import BaseStream
+from sendlive.logger import logger
 
 
 class AWSStream(BaseStream):
@@ -17,6 +18,7 @@ class AWSStream(BaseStream):
     def setup_endpoint(
         self,
         boto_session: Session,
+        security_input_group_id: int,
         tags: Optional[dict[str, str]] = None,
         stream_type: InputTypeType = "RTMP_PUSH",
     ) -> str:
@@ -24,13 +26,14 @@ class AWSStream(BaseStream):
         if tags is None:
             tags = dict()
         medialive: MediaLiveClient = boto_session.client("medialive")
-        # TODO security group setup/conf
         medialive_input = medialive.create_input(
             Destinations=[{"StreamName": self.name}],
+            InputSecurityGroups=[str(security_input_group_id)],
             Name=self.name,
             Type=stream_type,
             Tags=tags,
         )
+        logger.info(f"MEDIALIVE RESPONSE:\n\n{medialive_input}\n\n")
         response_metadata = medialive_input["ResponseMetadata"]
         if (
             response_metadata["HTTPStatusCode"] not in range(200, 300)
@@ -46,7 +49,7 @@ class AWSStream(BaseStream):
             )
         endpoint = destinations[0].get("Url")
         if not endpoint:
-            print(medialive_input)
+            logger.error(medialive_input)
             raise SendLiveError(
                 f"Failed to create input for stream {self.name}: no endpoint URL returned"
             )

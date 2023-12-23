@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
-from sendlive.constants import BaseCredential
+from sendlive.constants import BaseCredential, ProviderOptions
 from sendlive.stream import BaseStream
 
 
@@ -11,6 +11,7 @@ class BaseAdapter(BaseModel, ABC):
     """Base class for all cloud provider adapters."""
 
     credentials: BaseCredential
+    provider_options: Optional[ProviderOptions] = None
 
     @abstractmethod
     def setup_provider(self) -> None:
@@ -28,7 +29,7 @@ class BaseAdapter(BaseModel, ABC):
         """Fetch a list of all streams from the cloud provider."""
 
     @abstractmethod
-    def create_stream(self, name: str, url: str) -> BaseStream:
+    def create_stream(self, name: str) -> BaseStream:
         """Create a new stream on the cloud provider."""
 
     def __init__(self, credentials: BaseCredential, *args: Any, **kwargs: Any) -> None:
