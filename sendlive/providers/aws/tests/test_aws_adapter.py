@@ -53,7 +53,7 @@ def test_aws_adapter_provider_setup(
 ) -> None:
     """Test adapter can successfully attach a boto session to the instance."""
     sendlive_aws_adapter.setup_provider()
-    assert sendlive_aws_adapter.boto_session
+    assert sendlive_aws_adapter._boto_session
 
 
 @pytest.fixture(scope="function")
