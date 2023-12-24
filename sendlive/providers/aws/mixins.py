@@ -20,6 +20,7 @@ from pydantic import BaseModel, PrivateAttr, computed_field
 from sendlive.constants import AWSCredentials, AWSOptions
 from sendlive.exceptions import SendLiveError
 from sendlive.logger import logger
+from sendlive.providers.aws.constants import DEFAULT_AWS_TAGS
 from sendlive.providers.aws.mediapackage import (
     MediaPackageV2Channel,
     MediaPackageV2ChannelGroup,
@@ -27,6 +28,8 @@ from sendlive.providers.aws.mediapackage import (
 
 
 class AWSBaseMixin(BaseModel):
+    """Base mixin for AWS operations."""
+
     _boto_session: Session = PrivateAttr()
     provider_options: Optional[AWSOptions] = None
 
@@ -38,11 +41,22 @@ class AWSBaseMixin(BaseModel):
             region_name=credentials.region,
         )
 
+    def get_operation_tags(
+        self, tags: Optional[Mapping[str, str]] = {}
+    ) -> Mapping[str, str]:
+        """Ensure sendlive tags are inserted when tags are required for an operation - may be useful to override."""
+        if not tags:
+            return DEFAULT_AWS_TAGS
+        return {**tags, **DEFAULT_AWS_TAGS}
+
 
 class MediaLiveMixin(AWSBaseMixin):
+    """Mixin for MediaLive operations."""
+
     @computed_field
     @property
     def medialive(self) -> MediaLiveClient:
+        """Return medialive boto3 client."""
         return self._boto_session.client("medialive")
 
     def create_input_security_group(self) -> InputSecurityGroupTypeDef:
@@ -51,7 +65,8 @@ class MediaLiveMixin(AWSBaseMixin):
             raise SendLiveError("Boto session not set up.")
         input_security_group: CreateInputSecurityGroupResponseTypeDef = (
             self.medialive.create_input_security_group(
-                WhitelistRules=[{"Cidr": "0.0.0.0/0"}]
+                WhitelistRules=[{"Cidr": "0.0.0.0/0"}],
+                Tags=self.get_operation_tags(),
             )
         )
         if input_security_group["ResponseMetadata"]["HTTPStatusCode"] != 201:
@@ -68,12 +83,14 @@ class MediaLiveMixin(AWSBaseMixin):
 
 
 class MediaPackageV2Mixin(AWSBaseMixin):
+    """Mixin for MediaPackageV2 operations."""
+
     mediapackage_channel_groups: list[MediaPackageV2ChannelGroup] = []
 
     @computed_field
     @property
     def mediapackagev2(self) -> mediapackagev2Client:
-        """Return a MediaLive client."""
+        """Return a MediaPackageV2 boto3 client."""
         return self._boto_session.client("mediapackagev2")
 
     def create_mediapackagev2_channel_group(
@@ -86,12 +103,11 @@ class MediaPackageV2Mixin(AWSBaseMixin):
         if not self._boto_session:
             raise SendLiveError("Boto session not set up.")
         create_args: CreateChannelGroupRequestRequestTypeDef = {
-            "ChannelGroupName": channel_group_name
+            "ChannelGroupName": channel_group_name,
+            "Tags": self.get_operation_tags(tags),
         }
         if description:
             create_args["Description"] = description
-        if tags:
-            create_args["Tags"] = tags
         mediapackagev2_channel_group: CreateChannelGroupResponseTypeDef = (
             self.mediapackagev2.create_channel_group(**create_args)
         )
@@ -119,6 +135,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
             self.mediapackagev2.create_channel(
                 ChannelGroupName=channel_group_name,
                 ChannelName=channel_name,
+                Tags=self.get_operation_tags(),
             )
         )
         logger.info(
@@ -159,5 +176,13 @@ class MediaPackageV2Mixin(AWSBaseMixin):
                 ChannelName=channel_name,
                 OriginEndpointName=origin_endpoint_name,
                 ContainerType=container_type,
+                Tags=self.get_operation_tags(),
             )
         )
+        logger.info(
+            f"\n\nMEDIAPACKAGEV2 CREATE ORIGIN ENDPOINT RES:{mediapackagev2_origin_endpoint}\n\n"
+        )
+        if mediapackagev2_origin_endpoint["ResponseMetadata"]["HTTPStatusCode"] != 201:
+            raise SendLiveError(
+                f"Failed to create mediapackagev2 origin endpoint, received non 201 created response: {mediapackagev2_origin_endpoint}"
+            )
