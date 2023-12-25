@@ -1,10 +1,11 @@
 from typing_extensions import override
 
 from sendlive.adapter import BaseAdapter
+from sendlive.providers.gcp.mixins import LiveStreamAPIMixin
 from sendlive.providers.gcp.stream import GCPStream
 
 
-class GCPAdapter(BaseAdapter):
+class GCPAdapter(LiveStreamAPIMixin, BaseAdapter):
     """Adapter for GCP."""
 
     @override
@@ -12,5 +13,5 @@ class GCPAdapter(BaseAdapter):
         return list()
 
     @override
-    def create_stream(self, name: str, url: str) -> GCPStream:
-        return GCPStream(name="my_stream", url="rtmp://my_stream")
+    def create_stream(self, name: str) -> GCPStream:
+        return GCPStream(name="my_stream")

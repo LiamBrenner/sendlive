@@ -10,6 +10,7 @@ from sendlive.constants import GCPCredentials, GCPOptions
 from sendlive.exceptions import SendLiveError
 from sendlive.logger import logger
 from google.api_core.operation import Operation
+from google.protobuf.message import Message
 
 
 class GCPBaseMixin(BaseModel):
@@ -37,7 +38,7 @@ class LiveStreamAPIMixin(GCPBaseMixin):
         operation: Operation = self._gcp_session.create_input(
             parent=parent, input=input_endpoint, input_id="test"
         )
-        response: Any = operation.result(900)
-        print(f"Input: {response.name}")
+        response: Message = operation.result(900)  # type: ignore
+        print(f"Input: {response.name}")  # type: ignore
 
-        return response
+        return response  # type: ignore
