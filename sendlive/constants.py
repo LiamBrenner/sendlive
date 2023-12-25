@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Mapping, Optional
 
 from pydantic import BaseModel, Field, SecretStr
 
@@ -30,8 +30,9 @@ class GCPCredentials(BaseCredential):
     """Credentials for GCP."""
 
     project_id: str
-    service_account_json: SecretStr
+    service_account_json: dict[str, str]
     service_provider: ServiceProvider = ServiceProvider.GCP
+    region: str
 
 
 class ProviderOptions(BaseModel):
