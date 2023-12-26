@@ -1,7 +1,7 @@
-from collections.abc import Mapping, Sequence
 from typing import Optional
 
 from sendlive.constants import DEFAULT_TAGS
+from sendlive.types import MappingTags, TupleSequenceTags
 
 
 class TagMixin:
@@ -9,16 +9,16 @@ class TagMixin:
 
     def get_operation_tags(
         self,
-        tags: Optional[Mapping[str, str]] = {},
-    ) -> Mapping[str, str]:
+        tags: Optional[MappingTags] = None,
+    ) -> MappingTags:
         """Ensure sendlive tags are inserted when tags are required for an operation - may be useful to override."""
         if not tags:
             return DEFAULT_TAGS
         return {**tags, **DEFAULT_TAGS}
 
     def get_operation_tags_as_sequence_tuple(
-        self, tags: Mapping[str, str] = {}
-    ) -> Sequence[tuple[str, str]]:
+        self, tags: Optional[MappingTags] = None
+    ) -> TupleSequenceTags:
         """Convert a mapping of tags to a sequence of tuples."""
         tags = self.get_operation_tags(tags)
 
