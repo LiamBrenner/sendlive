@@ -25,6 +25,7 @@ from sendlive.providers.aws.mediapackage import (
     MediaPackageV2Channel,
     MediaPackageV2ChannelGroup,
 )
+from http import HTTPStatus
 
 
 class AWSBaseMixin(BaseModel):
@@ -69,7 +70,10 @@ class MediaLiveMixin(AWSBaseMixin):
                 Tags=self.get_operation_tags(),
             )
         )
-        if input_security_group["ResponseMetadata"]["HTTPStatusCode"] != 201:
+        if (
+            input_security_group["ResponseMetadata"]["HTTPStatusCode"]
+            != HTTPStatus.CREATED
+        ):
             raise SendLiveError(
                 f"Failed to create input security group, received non 201 created response: {input_security_group}"
             )
@@ -141,7 +145,10 @@ class MediaPackageV2Mixin(AWSBaseMixin):
         logger.info(
             f"\n\nMEDIAPACKAGEV2 CREATE CHANNEL RES:{mediapackage_v2_channel}\n\n"
         )
-        if mediapackage_v2_channel["ResponseMetadata"]["HTTPStatusCode"] != 201:
+        if (
+            mediapackage_v2_channel["ResponseMetadata"]["HTTPStatusCode"]
+            != HTTPStatus.CREATED
+        ):
             raise SendLiveError(
                 f"Failed to create mediapackagev2 channel, received non 201 created response: {mediapackage_v2_channel}"
             )
@@ -182,7 +189,10 @@ class MediaPackageV2Mixin(AWSBaseMixin):
         logger.info(
             f"\n\nMEDIAPACKAGEV2 CREATE ORIGIN ENDPOINT RES:{mediapackagev2_origin_endpoint}\n\n"
         )
-        if mediapackagev2_origin_endpoint["ResponseMetadata"]["HTTPStatusCode"] != 201:
+        if (
+            mediapackagev2_origin_endpoint["ResponseMetadata"]["HTTPStatusCode"]
+            != HTTPStatus.CREATED
+        ):
             raise SendLiveError(
                 f"Failed to create mediapackagev2 origin endpoint, received non 201 created response: {mediapackagev2_origin_endpoint}"
             )
