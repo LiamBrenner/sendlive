@@ -17,4 +17,8 @@ class GCPAdapter(LiveStreamAPIMixin, BaseAdapter):
 
     @override
     def create_stream(self, name: str) -> GCPStream:
-        return GCPStream(name="my_stream")
+        return GCPStream(name=name)
+
+    @override
+    def setup_stream(self) -> None:
+        return None
