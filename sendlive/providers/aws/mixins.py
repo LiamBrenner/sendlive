@@ -20,7 +20,7 @@ from pydantic import BaseModel, PrivateAttr, computed_field
 from sendlive.constants import AWSCredentials, AWSOptions
 from sendlive.exceptions import SendLiveError
 from sendlive.logger import logger
-from sendlive.providers.aws.constants import DEFAULT_AWS_TAGS
+from sendlive.mixins import TagMixin
 from sendlive.providers.aws.mediapackage import (
     MediaPackageV2Channel,
     MediaPackageV2ChannelGroup,
@@ -28,7 +28,7 @@ from sendlive.providers.aws.mediapackage import (
 from http import HTTPStatus
 
 
-class AWSBaseMixin(BaseModel):
+class AWSBaseMixin(BaseModel, TagMixin):
     """Base mixin for AWS operations."""
 
     _boto_session: Session = PrivateAttr()
@@ -41,14 +41,6 @@ class AWSBaseMixin(BaseModel):
             aws_secret_access_key=credentials.secret_key.get_secret_value(),
             region_name=credentials.region,
         )
-
-    def get_operation_tags(
-        self, tags: Optional[Mapping[str, str]] = {}
-    ) -> Mapping[str, str]:
-        """Ensure sendlive tags are inserted when tags are required for an operation - may be useful to override."""
-        if not tags:
-            return DEFAULT_AWS_TAGS
-        return {**tags, **DEFAULT_AWS_TAGS}
 
 
 class MediaLiveMixin(AWSBaseMixin):

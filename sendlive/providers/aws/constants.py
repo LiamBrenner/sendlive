@@ -1,7 +1,5 @@
 from typing import Any
 
-DEFAULT_AWS_TAGS: dict[str, str] = {"Created By": "sendlive"}
-
 DEFAULT_ORIGIN_ENDPOINT_HLS_PACKAGE: dict[str, Any] = {
     "adMarkers": "NONE",
     "adTriggers": [

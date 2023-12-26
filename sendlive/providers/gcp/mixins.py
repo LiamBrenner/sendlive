@@ -9,11 +9,10 @@ from pydantic import BaseModel, PrivateAttr, computed_field
 from sendlive.constants import GCPCredentials, GCPOptions
 from sendlive.exceptions import SendLiveError
 from sendlive.logger import logger
-from google.api_core.operation import Operation
-from google.protobuf.message import Message
+from sendlive.mixins import TagMixin
 
 
-class GCPBaseMixin(BaseModel):
+class GCPBaseMixin(BaseModel, TagMixin):
     """Base mixin for GCP operations."""
 
     _gcp_session: LivestreamServiceClient = PrivateAttr()
@@ -31,14 +30,28 @@ class GCPBaseMixin(BaseModel):
 class LiveStreamAPIMixin(GCPBaseMixin):
     """Mixin for GCP Live Streaming API operations."""
 
-    def create_input_endpoint(self) -> live_stream_v1.Input:
-        """Create a GCP input endpoint."""
+    gcp_input_endpoints: list[InputEndpoint] = []
+
+    def create_input_endpoint(self) -> InputEndpoint:
+        """Create a GCP input endpoint.
+
+        This operation appears to take a decent amount of time to complete.
+        It may be advisable to use a library such as celery when invoking.
+        """
         parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
-        input_endpoint = live_stream_v1.Input(type_="RTMP_PUSH")
+        input_endpoint = InputEndpoint(type_="RTMP_PUSH")
         operation: Operation = self._gcp_session.create_input(
-            parent=parent, input=input_endpoint, input_id="test"
+            parent=parent,
+            input=input_endpoint,
+            input_id="test",
+            metadata=self.get_operation_tags_as_sequence_tuple(),
         )
         response: Message = operation.result(900)  # type: ignore
-        print(f"Input: {response.name}")  # type: ignore
+        logger.info(f"\nGCP Create input endpoint res:{response}\n\n")
 
-        return response  # type: ignore
+        if not isinstance(response, InputEndpoint):
+            raise SendLiveError(
+                f"Unexpected response from GCP - Create input endpoint response not of type InputEndpoint: {response}"
+            )
+        self.gcp_input_endpoints.extend([response])
+        return response

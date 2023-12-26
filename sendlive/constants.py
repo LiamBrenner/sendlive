@@ -47,3 +47,6 @@ class AWSOptions(ProviderOptions):
 
 class GCPOptions(ProviderOptions):
     """GCP optional configuration."""
+
+
+DEFAULT_TAGS: dict[str, str] = {"Created By": "sendlive"}
