@@ -25,7 +25,8 @@
         "**/.mypy_cache/**": true
     },
     "search.exclude": {
-        "**/dist": true
+        "**/dist": true,
+        "poetry.lock": true
     },
     "mypy-type-checker.args": [
         "--config-file",
