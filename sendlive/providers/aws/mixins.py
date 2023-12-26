@@ -35,7 +35,8 @@ class AWSBaseMixin(BaseModel, TagMixin):
     provider_options: Optional[AWSOptions] = None
 
     def __init__(self, credentials: AWSCredentials, **data: dict[Any, Any]) -> None:
-        super().__init__(**data)
+        """Set up boto session."""
+        super().__init__(credentials=credentials, **data)
         self._boto_session = Session(
             aws_access_key_id=credentials.access_key,
             aws_secret_access_key=credentials.secret_key.get_secret_value(),

@@ -1,10 +1,12 @@
 from typing import Any, Optional
 
-from google.cloud.video import live_stream_v1
+from google.api_core.operation import Operation
+from google.cloud.video.live_stream_v1 import Input as InputEndpoint
 from google.cloud.video.live_stream_v1.services.livestream_service import (
     LivestreamServiceClient,
 )
-from pydantic import BaseModel, PrivateAttr, computed_field
+from google.protobuf.message import Message
+from pydantic import BaseModel, PrivateAttr
 
 from sendlive.constants import GCPCredentials, GCPOptions
 from sendlive.exceptions import SendLiveError
@@ -20,7 +22,8 @@ class GCPBaseMixin(BaseModel, TagMixin):
     provider_options: Optional[GCPOptions] = None
 
     def __init__(self, credentials: GCPCredentials, **data: dict[Any, Any]) -> None:
-        super().__init__(**data)
+        """Set gcp session and credentials up."""
+        super().__init__(credentials=credentials, **data)
         self._gcp_session = LivestreamServiceClient.from_service_account_info(
             info=credentials.service_account_json
         )
