@@ -13,9 +13,9 @@ class BaseAdapter(BaseModel, ABC):
     credentials: BaseCredential
     provider_options: Optional[ProviderOptions] = None
 
-    @abstractmethod
-    def setup_provider(self) -> None:
-        """Run any required steps to setup the cloud provider, such as creating a client and setting it on the adapter instance."""
+    # @abstractmethod
+    # def setup_provider(self) -> None:
+    #     """Run any required steps to setup the cloud provider, such as creating a client and setting it on the adapter instance."""
 
     @abstractmethod
     def setup_stream(self) -> None:
@@ -35,4 +35,4 @@ class BaseAdapter(BaseModel, ABC):
     def __init__(self, credentials: BaseCredential, *args: Any, **kwargs: Any) -> None:
         """Init the adapter and perform any required cloud provider setup steps."""
         super().__init__(*args, credentials=credentials, **kwargs)
-        self.setup_provider()
+        # self.setup_provider()
