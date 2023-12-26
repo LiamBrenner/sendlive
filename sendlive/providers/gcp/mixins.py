@@ -2,6 +2,7 @@ from typing import Any, Optional
 
 from google.api_core.operation import Operation
 from google.cloud.video.live_stream_v1 import Input as InputEndpoint
+from google.cloud.video.live_stream_v1 import Channel
 from google.cloud.video.live_stream_v1.services.livestream_service import (
     LivestreamServiceClient,
 )
@@ -12,6 +13,7 @@ from sendlive.constants import GCPCredentials, GCPOptions
 from sendlive.exceptions import SendLiveError
 from sendlive.logger import logger
 from sendlive.mixins import TagMixin
+from sendlive.providers.gcp.utils import build_gcp_channel_obj_from_defaults
 
 
 class GCPBaseMixin(BaseModel, TagMixin):
@@ -35,6 +37,8 @@ class LiveStreamAPIMixin(GCPBaseMixin):
 
     gcp_input_endpoints: list[InputEndpoint] = []
 
+    gcp_channels: list[Channel] = []
+
     def create_input_endpoint(self) -> InputEndpoint:
         """Create a GCP input endpoint.
 
@@ -57,4 +61,24 @@ class LiveStreamAPIMixin(GCPBaseMixin):
                 f"Unexpected response from GCP - Create input endpoint response not of type InputEndpoint: {response}"
             )
         self.gcp_input_endpoints.extend([response])
+        return response
+
+    def create_channel(self, name: str, input_id: str, channel_id: str) -> Channel:
+        """Create a GCP channel."""
+        parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
+        input_str = f"{parent}/inputs/{input_id}"
+        name = f"{parent}/channels/{channel_id}"
+        channel: Channel = build_gcp_channel_obj_from_defaults(
+            name, input_str, self.gcp_input_endpoints[0].uri
+        )
+        operation: Operation = self._gcp_session.create_channel(
+            parent=parent, channel=channel, channel_id=channel_id
+        )
+        response: Message = operation.result(600)  # type: ignore
+        logger.info(f"\nGCP Create channel res:{response}\n\n")
+
+        if not isinstance(response, Channel):
+            raise SendLiveError(
+                f"Unexpected response from GCP - Create channel response not of type Channel: {response}"
+            )
         return response
