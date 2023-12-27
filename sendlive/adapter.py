@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from sendlive.constants import BaseCredential, ProviderOptions
 from sendlive.stream import BaseStream
@@ -9,6 +9,8 @@ from sendlive.stream import BaseStream
 
 class BaseAdapter(BaseModel, ABC):
     """Base class for all cloud provider adapters."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     credentials: BaseCredential
     provider_options: Optional[ProviderOptions] = None

@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from typing_extensions import override
 
 from sendlive.adapter import BaseAdapter
@@ -10,6 +11,7 @@ class GCPAdapter(LiveStreamAPIMixin, BaseAdapter):
     """Adapter for GCP."""
 
     credentials: GCPCredentials
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @override
     def list_streams(self) -> list[str]:

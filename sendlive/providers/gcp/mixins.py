@@ -7,7 +7,7 @@ from google.cloud.video.live_stream_v1.services.livestream_service import (
     LivestreamServiceClient,
 )
 from google.protobuf.message import Message
-from pydantic import BaseModel, PrivateAttr
+from pydantic import BaseModel, ConfigDict, PrivateAttr
 
 from sendlive.constants import GCPCredentials, GCPOptions
 from sendlive.exceptions import SendLiveError
@@ -38,6 +38,8 @@ class LiveStreamAPIMixin(GCPBaseMixin):
     gcp_input_endpoints: list[InputEndpoint] = []
 
     gcp_channels: list[Channel] = []
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def create_input_endpoint(self) -> InputEndpoint:
         """Create a GCP input endpoint.

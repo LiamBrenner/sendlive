@@ -1,7 +1,7 @@
 """Main sendlive package."""
 from typing import Optional
 
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, ConfigDict, computed_field
 
 from sendlive.adapter import BaseAdapter
 from sendlive.constants import (
@@ -18,6 +18,7 @@ class SendLive(BaseModel):
 
     credentials: BaseCredential
     provider_options: Optional[ProviderOptions] = None
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @property
     def service_provider(self) -> ServiceProvider:

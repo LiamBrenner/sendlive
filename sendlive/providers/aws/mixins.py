@@ -16,7 +16,7 @@ from mypy_boto3_mediapackagev2.type_defs import (
     CreateChannelResponseTypeDef,
     CreateOriginEndpointResponseTypeDef,
 )
-from pydantic import BaseModel, PrivateAttr, computed_field
+from pydantic import BaseModel, ConfigDict, PrivateAttr, computed_field
 
 from sendlive.constants import AWSCredentials, AWSOptions
 from sendlive.exceptions import SendLiveError
@@ -33,6 +33,7 @@ class AWSBaseMixin(BaseModel, TagMixin):
 
     _boto_session: Session = PrivateAttr()
     provider_options: Optional[AWSOptions] = None
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def __init__(self, credentials: AWSCredentials, **data: dict[Any, Any]) -> None:
         """Set up boto session."""
@@ -46,6 +47,8 @@ class AWSBaseMixin(BaseModel, TagMixin):
 
 class MediaLiveMixin(AWSBaseMixin):
     """Mixin for MediaLive operations."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @computed_field  # type: ignore[misc]
     @property
@@ -83,6 +86,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
     """Mixin for MediaPackageV2 operations."""
 
     mediapackage_channel_groups: list[MediaPackageV2ChannelGroup] = []
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @computed_field  # type: ignore[misc]
     @property
