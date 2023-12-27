@@ -9,7 +9,6 @@ from mypy_boto3_medialive import MediaLiveClient
 
 from sendlive.constants import AWSCredentials
 from sendlive.providers.aws.adapter import AWSAdapter
-from sendlive.providers.aws.stream import AWSStream
 
 
 @pytest.fixture(scope="function")
