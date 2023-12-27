@@ -1,8 +1,8 @@
 from typing import Any, Optional
 
 from google.api_core.operation import Operation
-from google.cloud.video.live_stream_v1 import Input as InputEndpoint
 from google.cloud.video.live_stream_v1 import Channel
+from google.cloud.video.live_stream_v1 import Input as InputEndpoint
 from google.cloud.video.live_stream_v1.services.livestream_service import (
     LivestreamServiceClient,
 )
