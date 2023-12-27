@@ -1,6 +1,6 @@
 {
     "name": "sendlive",
-    "image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
+    "image": "mcr.microsoft.com/devcontainers/python:3.12-bookworm",
     "customizations": {
         "vscode": {
             "settings": {
