@@ -22,6 +22,7 @@ except ImportError:
 
 package = "sendlive"
 python_versions = [
+    "3.12",
     "3.11",
     "3.10",
     "3.9",
@@ -144,7 +145,7 @@ def safety(session: Session) -> None:
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or ["sendlive", "tests", "docs/conf.py"]
-    session.install(".")
+    session.run_always("poetry", "install", external=True)
     session.install("mypy", "pytest")
     session.run("mypy", *args)
     if not session.posargs:
@@ -154,7 +155,7 @@ def mypy(session: Session) -> None:
 @session(python=python_versions)
 def tests(session: Session) -> None:
     """Run the test suite."""
-    session.install(".")
+    session.run_always("poetry", "install", external=True)
     session.install("coverage[toml]", "pytest", "pygments")
     try:
         session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
@@ -179,7 +180,7 @@ def coverage(session: Session) -> None:
 @session(python=python_versions[0])
 def typeguard(session: Session) -> None:
     """Runtime type checking using Typeguard."""
-    session.install(".")
+    session.run_always("poetry", "install", external=True)
     session.install("pytest", "typeguard", "pygments")
     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
@@ -194,7 +195,7 @@ def xdoctest(session: Session) -> None:
         if "FORCE_COLOR" in os.environ:
             args.append("--colored=1")
 
-    session.install(".")
+    session.run_always("poetry", "install", external=True)
     session.install("xdoctest[colors]")
     session.run("python", "-m", "xdoctest", *args)
 
@@ -206,7 +207,7 @@ def docs_build(session: Session) -> None:
     if not session.posargs and "FORCE_COLOR" in os.environ:
         args.insert(0, "--color")
 
-    session.install(".")
+    session.run_always("poetry", "install", external=True)
     session.install("sphinx", "sphinx-click", "furo", "myst-parser")
 
     build_dir = Path("docs", "_build")
@@ -220,7 +221,7 @@ def docs_build(session: Session) -> None:
 def docs(session: Session) -> None:
     """Build and serve the documentation with live reloading on file changes."""
     args = session.posargs or ["--open-browser", "docs", "docs/_build"]
-    session.install(".")
+    session.run_always("poetry", "install", external=True)
     session.install("sphinx", "sphinx-autobuild", "sphinx-click", "furo", "myst-parser")
 
     build_dir = Path("docs", "_build")

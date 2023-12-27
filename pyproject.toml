@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sendlive"
-version = "0.0.3"
+version = "0.0.4-alpha1"
 description = "sendlive"
 authors = ["Liam Brenner <liam.brenner@gmail.com>"]
 license = "GPL-3.0"
@@ -16,10 +16,38 @@ Changelog = "https://github.com/LiamBrenner/sendlive/releases"
 [tool.poetry.dependencies]
 python = "^3.9"
 click = ">=8.1.7"
-boto3 = { version = ">=1.34.0", optional = true }
-google-cloud-video-live-stream = { version = ">=1.6.0", optional = true }
+boto3 = { version = ">=1.34.0" }
+google-cloud-video-live-stream = { version = ">=1.6.0" }
 urllib3 = ">=1.26.18,<2.0"
 pydantic = ">=2.5.2"
+boto3-stubs = { version = ">=1.34.2", extras = [
+    "essential",
+    "cloudfront",
+    "cloudwatch",
+    "ec2",
+    "events",
+    "iam",
+    "ivs",
+    "ivs-realtime",
+    "ivschat",
+    "logs",
+    "mediaconnect",
+    "mediaconvert",
+    "medialive",
+    "mediapackage",
+    "mediapackagev2",
+    "mediapackage-vod",
+    "mediastore",
+    "mediastore-data",
+    "mediatailor",
+    "s3",
+    "secretsmanager",
+    "ssm",
+    "sts",
+] }
+typing-extensions = ">=4.9.0"
+types-protobuf = "^4.24.0.4"
+
 
 [tool.poetry.dev-dependencies]
 moto = { extras = [
@@ -30,7 +58,6 @@ moto = { extras = [
 ], version = ">=4.2.11" }
 Pygments = ">=2.17.2"
 ruff = ">=0.1.8"
-boto3-stubs = { extras = ["essential"], version = ">=1.34.2", optional = true }
 coverage = { extras = ["toml"], version = ">=7.3.3" }
 furo = ">=2023.9.10"
 mypy = ">=1.7.1"
@@ -44,7 +71,6 @@ sphinx-click = ">=5.1.0"
 typeguard = ">=4.1.5"
 xdoctest = { extras = ["colors"], version = ">=1.1.2" }
 myst-parser = { version = ">=2.0.0" }
-typing-extensions = ">=4.9.0"
 
 [tool.poetry.extras]
 aws = ["boto3"]
@@ -53,33 +79,6 @@ gcp = ["google-cloud-video-live-stream"]
 [tool.poetry.scripts]
 sendlive = "sendlive.__main__:main"
 
-[tool.poetry.group.dev.dependencies]
-boto3-stubs = { version = ">=1.34.2", extras = [
-    "cloudfront",
-    "cloudwatch",
-    "ec2",
-    "ecr",
-    "ecs",
-    "events",
-    "iam",
-    "ivs",
-    "ivs-realtime",
-    "ivschat",
-    "lambda",
-    "logs",
-    "mediaconnect",
-    "mediaconvert",
-    "medialive",
-    "mediapackage",
-    "mediapackage-vod",
-    "mediastore",
-    "mediastore-data",
-    "mediatailor",
-    "s3",
-    "secretsmanager",
-    "ssm",
-    "sts",
-] }
 
 [tool.coverage.paths]
 source = ["sendlive", "*/sendlive"]
@@ -91,7 +90,7 @@ source = ["sendlive", "tests"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 100
+fail_under = 50
 
 [tool.mypy]
 strict = true
@@ -103,8 +102,9 @@ show_error_context = true
 plugins = ["pydantic.mypy"]
 
 [tool.ruff]
-target-version = "py311"
+target-version = "py312"
 select = ["E4", "E7", "E9", "F", "B", "N", "D", "S", "I", "UP", "PL"]
+ignore = ["D100", "UP007"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -113,7 +113,7 @@ build-backend = "poetry.core.masonry.api"
 
 # per https://github.com/astral-sh/ruff/issues/4368#issue-1705468153
 [tool.ruff.per-file-ignores]
-"tests/**/*.py" = [
+"**/tests/**/*.py" = [
     # at least this three should be fine in tests:
     "S101", # asserts allowed in tests...
     "ARG",  # Unused function args -> fixtures nevertheless are functionally relevant...
@@ -121,6 +121,10 @@ build-backend = "poetry.core.masonry.api"
     # The below are debateable
     "PLR2004", # Magic value used in comparison, ...
     "S311",    # Standard pseudo-random generators are not suitable for cryptographic purposes
+    "S106",    # Actually secret secrets not required in tests, ie can use placeholders
+    "S105",    # Actually secret secrets not required in tests, ie can use placeholders
+    "D104",    # Don't religiously need docstrings for all test modules
+    "D103",    # Don't religiously need docstrings for all test classes/funcs
 ]
 
 

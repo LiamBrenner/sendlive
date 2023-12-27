@@ -1,6 +1,6 @@
 {
     "name": "sendlive",
-    "image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
+    "image": "mcr.microsoft.com/devcontainers/python:3.12-bookworm",
     "customizations": {
         "vscode": {
             "settings": {
@@ -29,7 +29,8 @@
                 "ms-python.mypy-type-checker",
                 "tamasfe.even-better-toml",
                 "twixes.pypi-assistant",
-                "charliermarsh.ruff"
+                "charliermarsh.ruff",
+                "Boto3typed.boto3-ide"
             ]
         }
     }
