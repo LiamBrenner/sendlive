@@ -24,7 +24,7 @@ class AWSStream(BaseStream):
     ) -> str:
         """Set up and return a livestream endpoint for the stream."""
         if tags is None:
-            tags = dict()
+            tags = {}
         medialive: MediaLiveClient = boto_session.client("medialive")
         medialive_input = medialive.create_input(
             Destinations=[{"StreamName": self.name}],
