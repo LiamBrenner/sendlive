@@ -2791,6 +2791,17 @@ files = [
 ]
 
 [[package]]
+name = "types-protobuf"
+version = "4.24.0.4"
+description = "Typing stubs for protobuf"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "types-protobuf-4.24.0.4.tar.gz", hash = "sha256:57ab42cb171dfdba2c74bb5b50c250478538cc3c5ed95b8b368929ad0c9f90a5"},
+    {file = "types_protobuf-4.24.0.4-py3-none-any.whl", hash = "sha256:131ab7d0cbc9e444bc89c994141327dcce7bcaeded72b1acb72a94827eb9c7af"},
+]
+
+[[package]]
 name = "types-s3transfer"
 version = "0.10.0"
 description = "Type annotations and code completion for s3transfer"
@@ -2925,4 +2936,4 @@ gcp = ["google-cloud-video-live-stream"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "c40e071a33856384f14c5a7e59610583e14e7c2a89d24cc3e4248ab78c0b5893"
+content-hash = "91798c7b0b13daef84f08b79a45d0b4e318058615e962464f11c2a8e29a0f4a8"
