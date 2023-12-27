@@ -24,7 +24,7 @@ class SendLive(BaseModel):
         """Return the service provider, based on the provided credentials."""
         return self.credentials.service_provider
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def adapter(self) -> BaseAdapter:
         """Return the adapter for the configured service provider."""

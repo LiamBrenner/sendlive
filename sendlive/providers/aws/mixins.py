@@ -47,7 +47,7 @@ class AWSBaseMixin(BaseModel, TagMixin):
 class MediaLiveMixin(AWSBaseMixin):
     """Mixin for MediaLive operations."""
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def medialive(self) -> MediaLiveClient:
         """Return medialive boto3 client."""
@@ -84,7 +84,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
 
     mediapackage_channel_groups: list[MediaPackageV2ChannelGroup] = []
 
-    @computed_field
+    @computed_field  # type: ignore[misc]
     @property
     def mediapackagev2(self) -> mediapackagev2Client:
         """Return a MediaPackageV2 boto3 client."""
