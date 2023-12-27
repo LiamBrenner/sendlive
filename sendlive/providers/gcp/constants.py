@@ -1,7 +1,6 @@
 from google.cloud.video import live_stream_v1
 from google.protobuf import duration_pb2 as duration
 
-
 ### GCP Channel Defaults ###
 
 ## Elementary Stream Defaults ##

@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from http import HTTPStatus
 from typing import Any, Optional
 
 from boto3.session import Session
@@ -25,7 +26,6 @@ from sendlive.providers.aws.mediapackage import (
     MediaPackageV2Channel,
     MediaPackageV2ChannelGroup,
 )
-from http import HTTPStatus
 
 
 class AWSBaseMixin(BaseModel, TagMixin):

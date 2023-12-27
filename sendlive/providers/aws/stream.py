@@ -6,8 +6,8 @@ from mypy_boto3_medialive.literals import InputTypeType
 from typing_extensions import override
 
 from sendlive.exceptions import SendLiveError
-from sendlive.stream import BaseStream
 from sendlive.logger import logger
+from sendlive.stream import BaseStream
 
 
 class AWSStream(BaseStream):
