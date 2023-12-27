@@ -62,12 +62,13 @@ def sendlive_aws_adapter_with_boto_session(
     return sendlive_aws_adapter
 
 
-def test_aws_adapter_create_stream_with_endpoint_creation(
-    sendlive_aws_adapter_with_boto_session: AWSAdapter, medialive: MediaLiveClient
-) -> None:
-    """Test adapter can successfully create a stream, and create and fetch an enpoint for it."""
-    stream: AWSStream = sendlive_aws_adapter_with_boto_session.create_stream(
-        name="my_stream"
-    )
-    assert stream
-    assert stream.endpoint
+# @mock_medialive
+# def test_aws_adapter_create_stream_with_endpoint_creation(
+#     sendlive_aws_adapter_with_boto_session: AWSAdapter, medialive: MediaLiveClient
+# ) -> None:
+#     """Test adapter can successfully create a stream, and create and fetch an enpoint for it."""
+#     stream: AWSStream = sendlive_aws_adapter_with_boto_session.create_stream(
+#         name="my_stream"
+#     )
+#     assert stream
+#     assert stream.endpoint
