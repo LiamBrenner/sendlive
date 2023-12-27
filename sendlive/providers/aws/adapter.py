@@ -24,7 +24,7 @@ class AWSAdapter(MediaLiveMixin, MediaPackageV2Mixin, BaseAdapter):
 
     @override
     def list_streams(self) -> list[str]:
-        return list()
+        return []
 
     @override
     def create_stream(
