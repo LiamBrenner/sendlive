@@ -14,6 +14,7 @@ from sendlive.exceptions import SendLiveError
 from sendlive.logger import logger
 from sendlive.mixins import TagMixin
 from sendlive.providers.gcp.utils import build_gcp_channel_obj_from_defaults
+from sendlive.types import MappingTags
 
 
 class GCPBaseMixin(BaseModel, TagMixin):
@@ -22,6 +23,10 @@ class GCPBaseMixin(BaseModel, TagMixin):
     _gcp_session: LivestreamServiceClient = PrivateAttr()
     _gcp_credentials: GCPCredentials = PrivateAttr()
     provider_options: Optional[GCPOptions] = None
+
+    def get_tags(self, tags: Optional[MappingTags] = None) -> MappingTags:
+        """Tags are referred to as labels in GCP land, and keys must not contain spaces."""
+        return self.get_operation_tags_no_space_keys(tags)
 
     def __init__(self, credentials: GCPCredentials, **data: dict[Any, Any]) -> None:
         """Set gcp session and credentials up."""
@@ -41,19 +46,21 @@ class LiveStreamAPIMixin(GCPBaseMixin):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    def create_input_endpoint(self) -> InputEndpoint:
+    def create_input_endpoint(
+        self,
+        input_id: str,
+        input_type: str = "RTMP_PUSH",
+        tags: Optional[MappingTags] = None,
+    ) -> InputEndpoint:
         """Create a GCP input endpoint.
 
         This operation appears to take a decent amount of time to complete.
         It may be advisable to use a library such as celery when invoking.
         """
         parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
-        input_endpoint = InputEndpoint(type_="RTMP_PUSH")
+        input_endpoint = InputEndpoint(type_=input_type, labels=self.get_tags(tags))
         operation: Operation = self._gcp_session.create_input(
-            parent=parent,
-            input=input_endpoint,
-            input_id="test",
-            metadata=self.get_operation_tags_as_sequence_tuple(),
+            parent=parent, input=input_endpoint, input_id=input_id
         )
         response: Message = operation.result(900)  # type: ignore
         logger.info(f"\nGCP Create input endpoint res:{response}\n\n")
@@ -65,13 +72,22 @@ class LiveStreamAPIMixin(GCPBaseMixin):
         self.gcp_input_endpoints.extend([response])
         return response
 
-    def create_channel(self, name: str, input_id: str, channel_id: str) -> Channel:
+    def create_channel(
+        self,
+        name: str,
+        input_id: str,
+        channel_id: str,
+        tags: Optional[MappingTags] = None,
+    ) -> Channel:
         """Create a GCP channel."""
         parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
         input_str = f"{parent}/inputs/{input_id}"
         name = f"{parent}/channels/{channel_id}"
         channel: Channel = build_gcp_channel_obj_from_defaults(
-            name, input_str, self.gcp_input_endpoints[0].uri
+            name,
+            input_str,
+            self.gcp_input_endpoints[0].uri,
+            tags=self.get_tags(tags),
         )
         operation: Operation = self._gcp_session.create_channel(
             parent=parent, channel=channel, channel_id=channel_id

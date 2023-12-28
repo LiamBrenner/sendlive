@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sendlive.constants import DEFAULT_TAGS
-from sendlive.types import MappingTags, TupleSequenceTags
+from sendlive.types import MappingTags
 
 
 class TagMixin:
@@ -16,10 +16,10 @@ class TagMixin:
             return DEFAULT_TAGS
         return {**tags, **DEFAULT_TAGS}
 
-    def get_operation_tags_as_sequence_tuple(
+    def get_operation_tags_no_space_keys(
         self, tags: Optional[MappingTags] = None
-    ) -> TupleSequenceTags:
-        """Convert a mapping of tags to a sequence of tuples."""
+    ) -> MappingTags:
+        """Convert a mapping of tags to ensure all keys have no spaces. Spaces are replaced with hyphens."""
         tags = self.get_operation_tags(tags)
 
-        return [(key, value) for key, value in tags.items()]
+        return {key.replace(" ", "-"): value for key, value in tags.items()}

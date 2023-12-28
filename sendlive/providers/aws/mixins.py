@@ -26,6 +26,7 @@ from sendlive.providers.aws.mediapackage import (
     MediaPackageV2Channel,
     MediaPackageV2ChannelGroup,
 )
+from sendlive.types import MappingTags
 
 
 class AWSBaseMixin(BaseModel, TagMixin):
@@ -34,6 +35,10 @@ class AWSBaseMixin(BaseModel, TagMixin):
     _boto_session: Session = PrivateAttr()
     provider_options: Optional[AWSOptions] = None
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    def get_tags(self, tags: Optional[MappingTags] = None) -> MappingTags:
+        """Return tags for AWS resources with defaults added in."""
+        return self.get_operation_tags(tags)
 
     def __init__(self, credentials: AWSCredentials, **data: dict[Any, Any]) -> None:
         """Set up boto session."""
@@ -56,14 +61,16 @@ class MediaLiveMixin(AWSBaseMixin):
         """Return medialive boto3 client."""
         return self._boto_session.client("medialive")
 
-    def create_input_security_group(self) -> InputSecurityGroupTypeDef:
+    def create_input_security_group(
+        self, tags: Optional[MappingTags]
+    ) -> InputSecurityGroupTypeDef:
         """Create a medialive input security group and return it."""
         if not self._boto_session:
             raise SendLiveError("Boto session not set up.")
         input_security_group: CreateInputSecurityGroupResponseTypeDef = (
             self.medialive.create_input_security_group(
                 WhitelistRules=[{"Cidr": "0.0.0.0/0"}],
-                Tags=self.get_operation_tags(),
+                Tags=self.get_tags(tags),
             )
         )
         if (
@@ -105,7 +112,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
             raise SendLiveError("Boto session not set up.")
         create_args: CreateChannelGroupRequestRequestTypeDef = {
             "ChannelGroupName": channel_group_name,
-            "Tags": self.get_operation_tags(tags),
+            "Tags": self.get_tags(tags),
         }
         if description:
             create_args["Description"] = description
@@ -118,7 +125,10 @@ class MediaPackageV2Mixin(AWSBaseMixin):
         return mediapackagev2_channel_group
 
     def create_mediapackagev2_channel(
-        self, channel_group_name: Optional[str], channel_name: str
+        self,
+        channel_group_name: Optional[str],
+        channel_name: str,
+        tags: Optional[MappingTags],
     ) -> CreateChannelResponseTypeDef:
         """Create a mediapackagev2 channel.
 
@@ -136,7 +146,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
             self.mediapackagev2.create_channel(
                 ChannelGroupName=channel_group_name,
                 ChannelName=channel_name,
-                Tags=self.get_operation_tags(),
+                Tags=self.get_tags(tags),
             )
         )
         logger.info(
@@ -164,12 +174,13 @@ class MediaPackageV2Mixin(AWSBaseMixin):
                 "Adding a channel to a specific channel group that may or may not be already associated with this instance is not yet implemented."
             )
 
-    def create_mediapackagev2_origin_endpoint(
+    def create_mediapackagev2_origin_endpoint(  # noqa: PLR0913
         self,
         channel_group_name: str,
         channel_name: str,
         origin_endpoint_name: str,
         container_type: ContainerTypeType,
+        tags: Optional[MappingTags],
     ) -> None:
         """Create a mediapackagev2 origin endpoint."""
         if not self._boto_session:
@@ -180,7 +191,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
                 ChannelName=channel_name,
                 OriginEndpointName=origin_endpoint_name,
                 ContainerType=container_type,
-                Tags=self.get_operation_tags(),
+                Tags=self.get_tags(tags),
             )
         )
         logger.info(
