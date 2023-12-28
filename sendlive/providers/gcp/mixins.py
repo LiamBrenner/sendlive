@@ -26,7 +26,7 @@ class GCPBaseMixin(BaseModel, TagMixin):
 
     def get_tags(self, tags: Optional[MappingTags] = None) -> MappingTags:
         """Tags are referred to as labels in GCP land, and keys must not contain spaces."""
-        return self.get_operation_tags_no_space_keys(tags)
+        return self.get_operation_tags_lowercase_no_space_keys(tags)
 
     def __init__(self, credentials: GCPCredentials, **data: dict[Any, Any]) -> None:
         """Set gcp session and credentials up."""

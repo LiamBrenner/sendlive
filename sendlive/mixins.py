@@ -16,10 +16,10 @@ class TagMixin:
             return DEFAULT_TAGS
         return {**tags, **DEFAULT_TAGS}
 
-    def get_operation_tags_no_space_keys(
+    def get_operation_tags_lowercase_no_space_keys(
         self, tags: Optional[MappingTags] = None
     ) -> MappingTags:
-        """Convert a mapping of tags to ensure all keys have no spaces. Spaces are replaced with hyphens."""
+        """Convert a mapping of tags to ensure all keys have no spaces and are lowercase. Spaces are replaced with hyphens."""
         tags = self.get_operation_tags(tags)
 
-        return {key.replace(" ", "-"): value for key, value in tags.items()}
+        return {key.replace(" ", "-").lower(): value for key, value in tags.items()}
