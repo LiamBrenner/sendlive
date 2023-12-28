@@ -1,4 +1,3 @@
-from collections.abc import Mapping
 from http import HTTPStatus
 from typing import Any, Optional
 
@@ -62,7 +61,7 @@ class MediaLiveMixin(AWSBaseMixin):
         return self._boto_session.client("medialive")
 
     def create_input_security_group(
-        self, tags: Optional[MappingTags]
+        self, tags: Optional[MappingTags] = None
     ) -> InputSecurityGroupTypeDef:
         """Create a medialive input security group and return it."""
         if not self._boto_session:
@@ -105,7 +104,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
         self,
         channel_group_name: str,
         description: Optional[str],
-        tags: Optional[Mapping[str, str]],
+        tags: Optional[MappingTags] = None,
     ) -> CreateChannelGroupResponseTypeDef:
         """Create a mediapackagev2 channel group."""
         if not self._boto_session:
@@ -128,7 +127,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
         self,
         channel_group_name: Optional[str],
         channel_name: str,
-        tags: Optional[MappingTags],
+        tags: Optional[MappingTags] = None,
     ) -> CreateChannelResponseTypeDef:
         """Create a mediapackagev2 channel.
 
@@ -180,7 +179,7 @@ class MediaPackageV2Mixin(AWSBaseMixin):
         channel_name: str,
         origin_endpoint_name: str,
         container_type: ContainerTypeType,
-        tags: Optional[MappingTags],
+        tags: Optional[MappingTags] = None,
     ) -> None:
         """Create a mediapackagev2 origin endpoint."""
         if not self._boto_session:
