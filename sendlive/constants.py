@@ -40,13 +40,21 @@ class ProviderOptions(BaseModel):
 
 
 class AWSOptions(ProviderOptions):
-    """AWS optional configuration."""
+    """AWS configuration."""
 
     medialive_input_security_group_id: Optional[int]
 
 
 class GCPOptions(ProviderOptions):
-    """GCP optional configuration."""
+    """GCP configuration."""
+
+    get_or_create_bucket: bool = True
+
+    # if unset, first check using labels on gcp, then generate a name with faker
+    bucket_name: Optional[str] = None
 
 
-DEFAULT_TAGS: dict[str, str] = {"Created By": "sendlive"}
+CREATED_BY_KEY = "Created By"
+CREATED_BY_VALUE = "sendlive"
+
+DEFAULT_TAGS: dict[str, str] = {CREATED_BY_KEY: CREATED_BY_VALUE}
