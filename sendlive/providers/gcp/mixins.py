@@ -110,7 +110,11 @@ class GCPCloudStorageMixin(GCPBaseMixin):
 
         found_buckets: list[str] = list()
         for bucket in buckets:
-            if bucket.labels.get(CREATED_BY_KEY) == CREATED_BY_VALUE:
+            logger.info(f"Looking at bucket {bucket.name} with labels: {bucket.labels}")
+            if (
+                bucket.labels.get(self.created_by_tag_key_lowercase_no_space)
+                == self.created_by_tag_value_lowercase_no_space
+            ):
                 found_buckets.append(bucket.name)
         if len(found_buckets) > 1:
             raise SendLiveError(
