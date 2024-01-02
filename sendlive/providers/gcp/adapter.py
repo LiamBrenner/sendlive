@@ -3,11 +3,11 @@ from typing_extensions import override
 
 from sendlive.adapter import BaseAdapter
 from sendlive.constants import GCPCredentials
-from sendlive.providers.gcp.mixins import GCPCloudStorageMixin, GCPLiveStreamAPIMixin
+from sendlive.providers.gcp.mixins import GCPLiveStreamAPIMixin
 from sendlive.providers.gcp.stream import GCPStream
 
 
-class GCPAdapter(GCPCloudStorageMixin, GCPLiveStreamAPIMixin, BaseAdapter):
+class GCPAdapter(GCPLiveStreamAPIMixin, BaseAdapter):
     """Adapter for GCP."""
 
     credentials: GCPCredentials

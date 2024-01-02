@@ -149,7 +149,7 @@ class GCPCloudStorageMixin(GCPBaseMixin):
         return sendlive_bucket
 
 
-class GCPLiveStreamAPIMixin(GCPBaseMixin):
+class GCPLiveStreamAPIMixin(GCPCloudStorageMixin):
     """Mixin for GCP Live Streaming API operations."""
 
     gcp_input_endpoints: list[InputEndpoint] = []
