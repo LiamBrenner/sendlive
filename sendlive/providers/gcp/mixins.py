@@ -62,6 +62,11 @@ class GCPCloudStorageMixin(GCPBaseMixin):
 
     _bucket: Bucket = PrivateAttr()
 
+    @property
+    def bucket_uri(self):
+        """Get the gcp bucket uri."""
+        return f"gs://{self._bucket.name}"
+
     def init_bucket(
         self, bucket_name: Optional[str] = None, tags: Optional[MappingTags] = None
     ) -> None:
@@ -211,13 +216,17 @@ class GCPLiveStreamAPIMixin(GCPBaseMixin):
         tags: Optional[MappingTags] = None,
     ) -> Channel:
         """Create a GCP channel."""
+        if not self._bucket:
+            raise SendLiveError(
+                "Cannot create a channel without a bucket - please call init_bucket first."
+            )
         parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
         input_str = f"{parent}/inputs/{input_id}"
         name = f"{parent}/channels/{channel_id}"
         channel: Channel = build_gcp_channel_obj_from_defaults(
             name,
             input_str,
-            f"gs://{self.gcp_input_endpoints[0].uri}",
+            self.bucket_uri,
             tags=self.get_tags(tags),
         )
         operation: Operation = self.gcp_live_streaming_api_client().create_channel(
