@@ -13,7 +13,10 @@ from sendlive.types import MappingTags
 
 
 def build_gcp_channel_obj_from_defaults(
-    name: str, input_str: str, output_uri: str, tags: Optional[MappingTags] = None
+    name: str,
+    input_str: str,
+    bucket_output_uri: str,
+    tags: Optional[MappingTags] = None,
 ) -> live_stream_v1.Channel:
     """Build a GCP channel object from defaults."""
     # TODO check relevance of input attachment key
@@ -22,7 +25,7 @@ def build_gcp_channel_obj_from_defaults(
     input_attachment = live_stream_v1.InputAttachment(
         key="input-attachment", input=input_str
     )
-    output = live_stream_v1.Channel.Output(uri=output_uri)
+    output = live_stream_v1.Channel.Output(uri=bucket_output_uri)
     channel = live_stream_v1.Channel(
         name=name,
         input_attachments=[input_attachment],
