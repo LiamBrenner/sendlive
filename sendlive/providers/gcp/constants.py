@@ -52,6 +52,6 @@ GCP_DEFAULT_AUDIO_MUX = live_stream_v1.MuxStream(
 GCP_DEFAULT_MANIFEST = live_stream_v1.Manifest(
     file_name="manifest.m3u8",
     type_="HLS",
-    mux_streams=["mux_video", "mux_audio"],
+    mux_streams=["mux_video_720p", "mux_audio"],
     max_segment_count=5,
 )
