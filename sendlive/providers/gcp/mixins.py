@@ -239,4 +239,5 @@ class GCPLiveStreamAPIMixin(GCPBaseMixin):
             raise SendLiveError(
                 f"Unexpected response from GCP - Create channel response not of type Channel: {response}"
             )
+        self.gcp_channels.extend([response])
         return response
