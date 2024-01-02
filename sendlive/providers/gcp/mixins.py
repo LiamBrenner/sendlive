@@ -63,7 +63,7 @@ class GCPCloudStorageMixin(GCPBaseMixin):
     _bucket: Bucket = PrivateAttr()
 
     @property
-    def bucket_uri(self):
+    def bucket_uri(self) -> str:
         """Get the gcp bucket uri."""
         return f"gs://{self._bucket.name}"
 
