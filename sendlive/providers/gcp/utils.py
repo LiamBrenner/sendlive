@@ -25,7 +25,8 @@ def build_gcp_channel_obj_from_defaults(
     input_attachment = live_stream_v1.InputAttachment(
         key="input-attachment", input=input_str
     )
-    output = live_stream_v1.Channel.Output(uri=bucket_output_uri)
+    bucket_uri_with_path = f"{bucket_output_uri}/sendlive/gcp-streams"
+    output = live_stream_v1.Channel.Output(uri=bucket_uri_with_path)
     channel = live_stream_v1.Channel(
         name=name,
         input_attachments=[input_attachment],
@@ -36,3 +37,20 @@ def build_gcp_channel_obj_from_defaults(
         labels=tags or dict(),
     )
     return channel
+
+
+def construct_gcp_base_name(project_id: str, location: str) -> str:
+    """Construct the base name that makes up other specific GCP names."""
+    return f"projects/{project_id}/locations/{location}"
+
+
+def construct_gcp_input_endpoint_name(
+    project_id: str, location: str, input_id: str
+) -> str:
+    """Construct an input endpoint name string for GCP."""
+    return f"{construct_gcp_base_name(project_id, location)}/inputs/{input_id}"
+
+
+def construct_gcp_channel_name(project_id: str, location: str, channel_id: str) -> str:
+    """Construct a channel name string for GCP."""
+    return f"{construct_gcp_base_name(project_id, location)}/channels/{channel_id}"

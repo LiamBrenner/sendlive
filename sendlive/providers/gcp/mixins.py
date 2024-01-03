@@ -24,7 +24,13 @@ from sendlive.constants import (
 from sendlive.exceptions import SendLiveError
 from sendlive.logger import logger
 from sendlive.mixins import TagMixin
-from sendlive.providers.gcp.utils import build_gcp_channel_obj_from_defaults
+from sendlive.providers.gcp.constants import DEFAULT_CHANNEL_NAME
+from sendlive.providers.gcp.utils import (
+    build_gcp_channel_obj_from_defaults,
+    construct_gcp_base_name,
+    construct_gcp_channel_name,
+    construct_gcp_input_endpoint_name,
+)
 from sendlive.types import MappingTags
 from sendlive.utils import generate_dns_compliant_name
 
@@ -164,8 +170,9 @@ class GCPLiveStreamAPIMixin(GCPCloudStorageMixin):
         self, input_id: str, add_to_self: bool = False
     ) -> InputEndpoint:
         """Get a GCP input endpoint."""
-        parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
-        input_str = f"{parent}/inputs/{input_id}"
+        input_str = construct_gcp_input_endpoint_name(
+            self._gcp_credentials.project_id, self._gcp_credentials.region, input_id
+        )
         input_endpoint = self.gcp_live_streaming_api_client().get_input(name=input_str)
         if add_to_self:
             self.gcp_input_endpoints.extend([input_endpoint])
@@ -194,7 +201,9 @@ class GCPLiveStreamAPIMixin(GCPCloudStorageMixin):
         -------
             InputEndpoint: The created input endpoint.
         """
-        parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
+        parent = construct_gcp_base_name(
+            self._gcp_credentials.project_id, self._gcp_credentials.region
+        )
         input_endpoint = InputEndpoint(type_=input_type, labels=self.get_tags(tags))
         try:
             operation: Operation = self.gcp_live_streaming_api_client().create_input(
@@ -218,32 +227,83 @@ class GCPLiveStreamAPIMixin(GCPCloudStorageMixin):
     def create_channel(
         self,
         input_id: str,
-        channel_id: str,
+        supplied_channel_id: Optional[str] = None,
         tags: Optional[MappingTags] = None,
     ) -> Channel:
-        """Create a GCP channel."""
+        """Create a GCP channel.
+
+        If the specified channel name already exists, the existing channel will be looked up and returned.
+        """
+        channel_id = supplied_channel_id or DEFAULT_CHANNEL_NAME
         if not self._bucket:
             raise SendLiveError(
                 "Cannot create a channel without a bucket - please call init_bucket first."
             )
-        parent = f"projects/{self._gcp_credentials.project_id}/locations/{self._gcp_credentials.region}"
-        input_str = f"{parent}/inputs/{input_id}"
-        name = f"{parent}/channels/{channel_id}"
+        input_str = construct_gcp_input_endpoint_name(
+            self._gcp_credentials.project_id, self._gcp_credentials.region, input_id
+        )
+        name = construct_gcp_channel_name(
+            self._gcp_credentials.project_id,
+            self._gcp_credentials.region,
+            channel_id,
+        )
+
         channel: Channel = build_gcp_channel_obj_from_defaults(
             name,
             input_str,
             self.bucket_uri,
             tags=self.get_tags(tags),
         )
-        operation: Operation = self.gcp_live_streaming_api_client().create_channel(
-            parent=parent, channel=channel, channel_id=channel_id
-        )
-        response: Message = operation.result(600)  # type: ignore
-        logger.info(f"\nGCP Create channel res:{response}\n\n")
-
-        if not isinstance(response, Channel):
-            raise SendLiveError(
-                f"Unexpected response from GCP - Create channel response not of type Channel: {response}"
+        try:
+            operation: Operation = self.gcp_live_streaming_api_client().create_channel(
+                parent=construct_gcp_base_name(
+                    self._gcp_credentials.project_id, self._gcp_credentials.region
+                ),
+                channel=channel,
+                channel_id=channel_id,
             )
-        self.gcp_channels.extend([response])
-        return response
+            response: Message = operation.result(600)  # type: ignore
+            logger.info(f"\nGCP Create channel res:{response}\n\n")
+            if not isinstance(response, Channel):
+                raise SendLiveError(
+                    f"Unexpected response from GCP - Create channel response not of type Channel: {response}"
+                )
+            self.gcp_channels.extend([response])
+            return response
+        except AlreadyExists:
+            logger.warn(
+                f"Channel with specified name of '{name}' already exists. Getting that channel and returning it."
+            )
+            existing_channel: Channel = self.get_channel(name)
+            return existing_channel
+
+    def get_channel(
+        self, name: Optional[str] = None, add_to_self: bool = False
+    ) -> Channel:
+        """Get a GCP channel."""
+        channel = self.gcp_live_streaming_api_client().get_channel(
+            name=name or DEFAULT_CHANNEL_NAME
+        )
+        if add_to_self:
+            self.gcp_channels.extend([channel])
+        return channel
+
+    def list_channels(self) -> list[Channel]:
+        """List GCP channels."""
+        parent = construct_gcp_base_name(
+            self._gcp_credentials.project_id, self._gcp_credentials.region
+        )
+        channels = list()
+        channels_response = self.gcp_live_streaming_api_client().list_channels(
+            parent=parent
+        )
+        for channel in channels_response:
+            channels.append(channel)
+        return channels
+
+    def delete_channel(self, channel_resource_path: str) -> None:
+        """Delete a GCP channel."""
+        response = self.gcp_live_streaming_api_client().delete_channel(
+            name=channel_resource_path
+        )
+        logger.debug(f"\nGCP Delete channel res:{response}\n\n")

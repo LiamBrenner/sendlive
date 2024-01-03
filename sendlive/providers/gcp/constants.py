@@ -55,3 +55,5 @@ GCP_DEFAULT_MANIFEST = live_stream_v1.Manifest(
     mux_streams=["mux_video_720p", "mux_audio"],
     max_segment_count=5,
 )
+
+DEFAULT_CHANNEL_NAME = "sendlive-default-channel"
